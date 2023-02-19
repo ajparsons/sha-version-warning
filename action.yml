@@ -42,9 +42,9 @@ runs:
       name: Get current commit
       shell: bash
       run: |
-        sha=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-                    https://api.github.com/repos/$OWNER/$REPO/git/refs/heads/$BRANCH_OR_TAG \
-                    | jq -r '.object.sha')
+        sha=$(curl -s \
+              https://api.github.com/repos/$OWNER/$REPO/git/refs/heads/$BRANCH_OR_TAG \
+              | jq -r '.object.sha')
         echo "CURRENT_SHA=$sha" >> "$GITHUB_OUTPUT"
       env:
         OWNER: ${{ steps.get-details.outputs.CURRENT_ACTION_USER }}
