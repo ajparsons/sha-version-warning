@@ -53,7 +53,7 @@ runs:
       name: Action warning
       shell: bash
       run: |
-        ca = "$OWNER/$REPO"
+        ca="$OWNER/$REPO"
         if [[ $VERSION_IS_SHA = "true" ]]
         then
           echo "warning_given=false" >> "$GITHUB_OUTPUT"
