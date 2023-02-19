@@ -18,9 +18,9 @@ runs:
     - name: Action warning
       shell: bash
       run: |
+        cd "$CURRENT_ACTION_PATH"
         CURRENT_SHA=$(git log -1 --format="%H")
         SHORT_SHA=$(git log -1 --format="%h")
-        cd "$CURRENT_ACTION_PATH"
         CURRENT_VERSION="${PWD##*/}"
         cd ..
         CURRENT_ACTION_NAME="${PWD##*/}"
