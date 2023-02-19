@@ -14,31 +14,56 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - id: action-warning
-      name: Action warning
+
+    - id: get-details
+      name: Get details
       shell: bash
       run: |
         cd "$CURRENT_ACTION_PATH"
-        CURRENT_SHA=$(git log -1 --format="%H")
-        SHORT_SHA=$(git log -1 --format="%h")
         CURRENT_VERSION="${PWD##*/}"
         cd ..
         CURRENT_ACTION_NAME="${PWD##*/}"
         cd ..
         CURRENT_ACTION_USER="${PWD##*/}"
-        #  No trust problems if same owner as current repo - not used
-        ## if [[ "$GITHUB_REPOSITORY_OWNER" == "$CURRENT_ACTION_USER" ]]
-        ## then
-        ##  exit 0
-        ## fi
-        CA="$CURRENT_ACTION_USER/$CURRENT_ACTION_NAME"
-        # if this already uses a pin no problem!
-        if [[ $CURRENT_VERSION = @(CURRENT_SHA|SHORT_SHA) ]]
+        echo "CURRENT_ACTION_USER=$CURRENT_ACTION_USER" >> "$GITHUB_OUTPUT"
+        echo "CURRENT_ACTION_NAME=$CURRENT_ACTION_USER" >> "$GITHUB_OUTPUT"
+        echo "CURRENT_VERSION=$CURRENT_ACTION_USER" >> "$GITHUB_OUTPUT"
+        if [ ${#variable} -eq 40 ]
+        then
+          echo "VERSION_IS_SHA=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "VERSION_IS_SHA=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - id: get-current-commit
+      if: ${{steps.get-details.outputs.VERSION_IS_SHA == 'false' }}
+      name: Get current commit
+      shell: bash
+      run: |
+        sha=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                    https://api.github.com/repos/$OWNER/$REPO/git/refs/heads/$BRANCH_OR_TAG \
+                    | jq -r '.object.sha')
+        echo "CURRENT_SHA=$sha" >> "$GITHUB_OUTPUT"
+      env:
+        OWNER: ${{ steps.get-details.outputs.CURRENT_ACTION_USER }}
+        REPO: ${{ steps.get-details.outputs.CURRENT_ACTION_NAME }}
+        BRANCH_OR_TAG: ${{ steps.get-details.outputs.CURRENT_VERSION }}
+
+    - id: action-warning
+      name: Action warning
+      shell: bash
+      run: |
+        ca = "$OWNER/$REPO"
+        if [[ $VERSION_IS_SHA = "true" ]]
         then
           echo "warning_given=false" >> "$GITHUB_OUTPUT"
         else
           echo "warning_given=true" >> "$GITHUB_OUTPUT"
-          echo "::warning title=Pin $CA::For security, replace: '$CA@$CURRENT_VERSION' with '$CA@$CURRENT_SHA #$CURRENT_VERSION'"
+          echo "::warning title=Pin $CA::For security, replace: '$CA@$CURRENT_VERSION' with '$CA@$CORRECT_SHA #$CURRENT_VERSION'"
         fi
       env: 
-        CURRENT_ACTION_PATH: ${{ inputs.action_path }}
+        VERSION_IS_SHA: ${{ steps.get-details.outputs.VERSION_IS_SHA  }}
+        OWNER: ${{ steps.get-details.outputs.CURRENT_ACTION_USER }}
+        REPO: ${{ steps.get-details.outputs.CURRENT_ACTION_NAME }}
+        CURRENT_VERSION: ${{ steps.get-details.outputs.CURRENT_VERSION }}
+        CORRECT_SHA: $ {{ steps.get-current-commit.outputs.sha }}
