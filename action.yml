@@ -40,7 +40,7 @@ runs:
       name: Get current commit
       shell: bash
       run: |
-        sha=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+        sha=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
                     https://api.github.com/repos/$OWNER/$REPO/git/refs/heads/$BRANCH_OR_TAG \
                     | jq -r '.object.sha')
         echo "CURRENT_SHA=$sha" >> "$GITHUB_OUTPUT"
