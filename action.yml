@@ -14,8 +14,8 @@ outputs:
 runs:
   using: "composite"
   steps:
-      id: action-warning
-    - name: Action warning
+    - id: action-warning
+      name: Action warning
       shell: bash
       run: |
         cd "$CURRENT_ACTION_PATH"
