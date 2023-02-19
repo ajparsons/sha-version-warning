@@ -33,7 +33,8 @@ runs:
         ## fi
         CA="$CURRENT_ACTION_USER/$CURRENT_ACTION_NAME"
         # if this already uses a pin no problem!
-        if [[ $CURRENT_VERSION = @(CURRENT_SHA|SHORT_SHA) ]]; then
+        if [[ $CURRENT_VERSION = @(CURRENT_SHA|SHORT_SHA) ]]
+        then
           echo "warning_given=false" >> "$GITHUB_OUTPUT"
         else
           echo "warning_given=true" >> "$GITHUB_OUTPUT"
