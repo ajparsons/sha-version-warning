@@ -28,7 +28,7 @@ runs:
         echo "CURRENT_ACTION_USER=$CURRENT_ACTION_USER" >> "$GITHUB_OUTPUT"
         echo "CURRENT_ACTION_NAME=$CURRENT_ACTION_NAME" >> "$GITHUB_OUTPUT"
         echo "CURRENT_VERSION=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
-        if [ ${#variable} -eq 40 ]
+        if [ ${#CURRENT_VERSION} -eq 40 ]
         then
           echo "VERSION_IS_SHA=true" >> "$GITHUB_OUTPUT"
         else
