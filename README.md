@@ -1,6 +1,6 @@
 # Sha Version Warning
 
-Version: 1.0.0
+Version: 1.0.1
 
 
 
@@ -36,6 +36,6 @@ Path to action being checked.
 
 ### warning_given
 
-Boolean if there warning was raised. Will be none if 'commit_and_push' was false.
+Boolean if there warning was raised.
 
 
