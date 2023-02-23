@@ -1,5 +1,5 @@
 name: 'Sha Version Warning'
-version: 1.0.0
+version: 1.0.1
 description: 'Github Action to raise a warning if an action is not being referred to by SHA'
 inputs:
   action_path:
@@ -7,7 +7,7 @@ inputs:
 
 outputs:
   warning_given:
-    description: "Boolean if there warning was raised. Will be none if 'commit_and_push' was false."
+    description: "Boolean if there warning was raised."
     value: ${{ steps.action-warning.outputs.warning_given }}
  
 
