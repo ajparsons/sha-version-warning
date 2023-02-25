@@ -42,16 +42,14 @@ runs:
       name: Get current commit
       shell: bash
       run: |
-        branch_sha=$(curl -s \
-              https://api.github.com/repos/$OWNER/$REPO/git/refs/heads/$BRANCH_OR_TAG \
-              | jq -r '.object.sha')
-        tag_sha=$(curl -s \
-              https://api.github.com/repos/$OWNER/$REPO/git/refs/tags/$BRANCH_OR_TAG \
-              | jq -r '.object.sha')
-        if [ "$branch_sha" != "null" ]; then
-          sha="$branch_sha"
-        elif [ "$tag_sha" != "null" ]; then
-          sha="$tag_sha"
+          sha=$(curl -s \
+                https://api.github.com/repos/$OWNER/$REPO/git/refs/tags/$BRANCH_OR_TAG \
+                | jq -r '.object.sha')
+        if [ "$sha" != "null" ]
+        then
+          sha=$(curl -s \
+                https://api.github.com/repos/$OWNER/$REPO/git/refs/heads/$BRANCH_OR_TAG \
+                | jq -r '.object.sha')
         fi
         echo "CURRENT_SHA=$sha" >> "$GITHUB_OUTPUT"
       env:
