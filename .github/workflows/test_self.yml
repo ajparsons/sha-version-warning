@@ -33,9 +33,9 @@ jobs:
       - name: Test
         shell: python
         env:
-          BRANCH_USED: ${{ branch-used.outputs.warning_given }}
-          TAG_USED: ${{ branch-used.outputs.warning_given }}
-          SHA_USED: ${{ branch-used.outputs.warning_given }}
+          BRANCH_USED: ${{ steps.branch-used.outputs.warning_given }}
+          TAG_USED: ${{ steps.tag-used.outputs.warning_given }}
+          SHA_USED: ${{ steps.sha-used.outputs.warning_given }}
         run: |
           import os
           if os.environ["BRANCH_USED"] == "false":
