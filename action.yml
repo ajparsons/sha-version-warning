@@ -1,5 +1,5 @@
 name: 'Sha Version Warning'
-version: 1.0.1
+version: 1.0.2
 description: 'Github Action to raise a warning if an action is not being referred to by SHA'
 inputs:
   action_path:
