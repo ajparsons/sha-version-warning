@@ -1,0 +1,48 @@
+# Call the version test dummy multiple times in different ways and check we got the warnings we expect
+
+name: "Test warning issue"
+
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}-${{ github.event.inputs.pypi }}-${{ github.event.inputs.testpypi }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+
+  update-action-meta:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Branch used
+        uses: ajparsons/version-test-dummy@main
+        id: branch-used
+
+      - name: Sha used
+        uses: ajparsons/version-test-dummy@92d71ea1e4fe4f47e09c4dd7fd5f9765314fbd0c
+        id: sha-used
+
+      - name: Tag used
+        uses: ajparsons/version-test-dummy@v0.1.0
+        id: tag-used
+
+      - name: Test
+        shell: python
+        env:
+          BRANCH_USED: ${{ branch-used.outputs.warning_given }}
+          TAG_USED: ${{ branch-used.outputs.warning_given }}
+          SHA_USED: ${{ branch-used.outputs.warning_given }}
+        run: |
+          import os
+          if os.environ["BRANCH_USED"] == "false":
+            raise ValueError("Branch use should have given a warning")
+          if os.environ["TAG_USED"] == "false":
+            raise ValueError("Tag use should have given a warning")
+          if os.environ["SHA_USED"] == "true":
+            raise ValueError("Sha use should not have given a warning")
+
+
