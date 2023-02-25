@@ -48,9 +48,9 @@ runs:
         tag_sha=$(curl -s \
               https://api.github.com/repos/$OWNER/$REPO/git/refs/heads/$BRANCH_OR_TAG \
               | jq -r '.object.sha')
-        if [ -n "$branch_sha" ]; then
+        if [ "$branch_sha" != "null" ]; then
           sha="$branch_sha"
-        elif [ -n "$tag_sha" ]; then
+        elif [ "$tag_sha" != "null" ]; then
           sha="$tag_sha"
         fi
         echo "CURRENT_SHA=$sha" >> "$GITHUB_OUTPUT"
