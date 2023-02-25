@@ -42,9 +42,17 @@ runs:
       name: Get current commit
       shell: bash
       run: |
-        sha=$(curl -s \
+        branch_sha=$(curl -s \
               https://api.github.com/repos/$OWNER/$REPO/git/refs/heads/$BRANCH_OR_TAG \
               | jq -r '.object.sha')
+        tag_sha=$(curl -s \
+              https://api.github.com/repos/$OWNER/$REPO/git/refs/heads/$BRANCH_OR_TAG \
+              | jq -r '.object.sha')
+        if [ -n "$branch_sha" ]; then
+          sha="$branch_sha"
+        elif [ -n "$tag_sha" ]; then
+          sha="$tag_sha"
+        fi
         echo "CURRENT_SHA=$sha" >> "$GITHUB_OUTPUT"
       env:
         OWNER: ${{ steps.get-details.outputs.CURRENT_ACTION_USER }}
@@ -61,7 +69,7 @@ runs:
           echo "warning_given=false" >> "$GITHUB_OUTPUT"
         else
           echo "warning_given=true" >> "$GITHUB_OUTPUT"
-          echo "::warning title=Pin $CA::For security, replace: '$CA@$CURRENT_VERSION' with '$CA@$CORRECT_SHA #$CURRENT_VERSION'"
+          echo "::warning title=Pin $CA::For security, replace: '$CA@$CURRENT_VERSION' with '$CA@$CORRECT_SHA # $CURRENT_VERSION'"
         fi
       env: 
         VERSION_IS_SHA: ${{ steps.get-details.outputs.VERSION_IS_SHA  }}
